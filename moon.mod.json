@@ -3,6 +3,19 @@
   "version": "0.1.0",
   "deps": {},
   "readme": "README.md",
-  "repository": "https://github.com/CGaaaaaa/reactivex",
-  "license": "MIT"
+  "repository": "https://github.com/CGaaaaaa/ReactiveX",
+  "license": "MIT",
+  "description": "Reactive Extensions for MoonBit - 响应式编程库",
+  "keywords": [
+    "reactive",
+    "observables",
+    "reactivex",
+    "functional",
+    "async",
+    "streams",
+    "operators"
+  ],
+  "authors": [
+    "CGaaaaaa"
+  ]
 }
