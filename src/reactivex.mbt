@@ -189,6 +189,12 @@ pub fn[T] filter(source : Observable[T], predicate : (T) -> Bool) -> Observable[
 /// take 操作符 - 只取前 n 个值
 pub fn[T] take(source : Observable[T], count : Int) -> Observable[T] {
   new_observable(fn(observer) {
+    if count <= 0 {
+      // 如果count <= 0，立即完成
+      (observer.on_complete)()
+      return new_subscription()
+    }
+    
     let mut taken = 0
     let original_observer = new_observer(
       fn(value) {

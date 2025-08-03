@@ -1,28 +1,58 @@
 # ReactiveX for MoonBit
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![codecov](https://codecov.io/gh/CGaaaaaa/reactivex/branch/main/graph/badge.svg)](https://codecov.io/gh/CGaaaaaa/reactivex)
 [![Tests Passing](https://img.shields.io/badge/Tests-Passing-brightgreen.svg)](src/test.mbt)
 
-Reactive Extensions for MoonBit - 用于 MoonBit 编程语言的响应式编程库。
+English | [中文](README_zh_CN.md)
 
-## 概述
+Reactive Extensions for MoonBit - A comprehensive reactive programming library for the MoonBit language.
 
-ReactiveX for MoonBit 是一个轻量级的响应式编程库，提供了 Observable 序列和操作符，用于组合异步和基于事件的程序。
+## Overview
 
-## 特性
+ReactiveX for MoonBit is a feature-complete reactive programming library that provides Observable sequences and rich operators for composing asynchronous and event-based programs. Based on the ReactiveX specification, it brings powerful reactive programming capabilities to the MoonBit language.
 
-- ✅ 核心类型：`Observable[T]`, `Observer[T]`, `BasicSubscription`
-- ✅ 创建操作符：`of`, `from_array`, `empty`, `never`, `error`
-- ✅ 转换操作符：`map`, `filter`, `take`, `skip`, `scan`, `reduce`
-- ✅ 类型安全的泛型支持
-- ✅ 内存安全的订阅管理
+## Features
 
-## 快速开始
+### 🔧 Core Components
+- ✅ **Core Types**: `Observable[T]`, `Observer[T]`, `BasicSubscription`
+- ✅ **Error Handling**: `RxError` enum type with type-safe error management
+- ✅ **Subscription Management**: Memory-safe subscription lifecycle management
 
-### 安装
+### 🚀 Creation Operators (5)
+- ✅ `of` - Create Observable from a single value
+- ✅ `from_array` - Create Observable from an array
+- ✅ `empty` - Create empty sequence
+- ✅ `never` - Create Observable that never emits
+- ✅ `error` / `error_with_type` - Create error Observable
 
-将此库添加到您的 `moon.mod.json` 依赖中：
+### 🔄 Transformation Operators (6)
+- ✅ `map` - Transform values
+- ✅ `filter` - Filter by predicate
+- ✅ `take` - Take first N values
+- ✅ `skip` - Skip first N values
+- ✅ `scan` - Accumulate with intermediate results
+- ✅ `reduce` - Reduce to single final result
+
+### 🔗 Combination Operators (2)
+- ✅ `merge` - Merge multiple Observables
+- ✅ `concat` - Concatenate multiple Observables
+
+### 🛠️ Utility Operators (3)
+- ✅ `tap` - Side effects (debugging friendly)
+- ✅ `distinct` - Remove duplicates
+- ✅ `catch_error` - Error catching and recovery
+
+### ⚡ Advanced Features
+- ✅ **Generic Support**: Full type safety guarantees
+- ✅ **Fluent API**: Chainable method design
+- ✅ **Error Recovery**: Robust error handling mechanisms
+- ✅ **Test Coverage**: 29 test cases with 100% coverage
+
+## Quick Start
+
+### Installation
+
+Add this library to your `moon.mod.json` dependencies:
 
 ```json
 {
@@ -32,122 +62,195 @@ ReactiveX for MoonBit 是一个轻量级的响应式编程库，提供了 Observ
 }
 ```
 
-### 基本使用
+### Basic Usage
 
 ```moonbit
-// 创建 Observable
+// Create Observable
 let numbers = from_array([1, 2, 3, 4, 5])
 
-// 转换数据
-let doubled = map(numbers, fn(x) { x * 2 })
+// Transform data stream: map -> filter -> limit
+let result = numbers
+  |> map(fn(x) { x * 2 })           // [2, 4, 6, 8, 10]
+  |> filter(fn(x) { x > 5 })        // [6, 8, 10]  
+  |> take(2)                        // [6, 8]
 
-// 过滤数据
-let filtered = filter(doubled, fn(x) { x > 5 })
+// Method 1: Simple subscription (data only)
+let _ = result.subscribe_next(fn(value) { 
+  println("Received: \(value)") 
+})
 
-// 订阅观察
-let observer = new_observer(
-  fn(value) { println("接收到: " + value.to_string()) },
-  fn(error) { println("错误: " + error) },
-  fn() { println("完成!") }
+// Method 2: Complete subscription (data, error, complete)
+let observer = new_simple_observer(
+  fn(value) { println("Value: \(value)") },
+  fn(error) { println("Error: \(error)") },
+  fn() { println("Complete!") }
 )
-
-let subscription = subscribe(filtered, observer)
+let subscription = result.subscribe(observer)
 ```
 
-## API 文档
+### Error Handling Example
 
-### 核心类型
+```moonbit
+// Create potentially failing Observable
+let risky_data = from_array([1, 0, 2])
+  |> map(fn(x) { 10 / x })  // Division by zero will fail
+
+// Use catch_error for recovery
+let safe_data = risky_data.catch_error(fn(err) {
+  println("Caught error: \(err)")
+  of(-1)  // Return default value
+})
+
+let _ = safe_data.subscribe_next(fn(x) { println("Result: \(x)") })
+```
+
+## API Documentation
+
+### 🔧 Core Types
+
+#### `RxError`
+```moonbit
+pub enum RxError {
+  RuntimeError(String)      // Runtime error
+  OperatorError(String)     // Operator error  
+  SubscriptionError(String) // Subscription error
+  TimeoutError(String)      // Timeout error
+}
+```
 
 #### `Observable[T]`
-响应式数据流的核心类型，表示一个可观察的值序列。
+Core type representing a reactive data stream - an observable sequence of values.
 
 #### `Observer[T]`
-观察者接口，包含三个回调函数：
-- `on_next: (T) -> Unit` - 接收到新值时调用
-- `on_error: (String) -> Unit` - 发生错误时调用  
-- `on_complete: () -> Unit` - 序列完成时调用
+Observer interface with three callback functions:
+- `on_next: (T) -> Unit` - Called when receiving new value
+- `on_error: (RxError) -> Unit` - Called when error occurs
+- `on_complete: () -> Unit` - Called when sequence completes
 
-#### `BasicSubscription`
-基础订阅实现，用于管理订阅生命周期。
+### 🚀 Creation Operators
 
-### 创建操作符
+- `of[T](value: T) -> Observable[T]` - Create from single value
+- `from_array[T](values: Array[T]) -> Observable[T]` - Create from array
+- `empty[T]() -> Observable[T]` - Create empty sequence
+- `never[T]() -> Observable[T]` - Create never-emitting sequence
+- `error[T](message: String) -> Observable[T]` - Create error sequence
 
-- `of[T](value: T) -> Observable[T]` - 从单个值创建 Observable
-- `from_array[T](values: Array[T]) -> Observable[T]` - 从数组创建 Observable
-- `empty[T]() -> Observable[T]` - 创建空的 Observable
-- `never[T]() -> Observable[T]` - 创建永不发射的 Observable
-- `error[T](message: String) -> Observable[T]` - 创建发射错误的 Observable
+### 🔄 Transformation Operators
 
-### 转换操作符
+- `map[T, U](source, transform) -> Observable[U]` - Transform values
+- `filter[T](source, predicate) -> Observable[T]` - Filter by condition
+- `take[T](source, count) -> Observable[T]` - Take first N values
+- `skip[T](source, count) -> Observable[T]` - Skip first N values
+- `scan[T, U](source, initial, accumulator) -> Observable[U]` - Accumulate
+- `reduce[T, U](source, initial, accumulator) -> Observable[U]` - Reduce
 
-- `map[T, U](source: Observable[T], transform: (T) -> U) -> Observable[U]` - 转换每个发射的值
-- `filter[T](source: Observable[T], predicate: (T) -> Bool) -> Observable[T]` - 过滤满足条件的值
-- `take[T](source: Observable[T], count: Int) -> Observable[T]` - 只取前 n 个值
-- `skip[T](source: Observable[T], count: Int) -> Observable[T]` - 跳过前 n 个值
-- `scan[T, U](source: Observable[T], initial: U, accumulator: (U, T) -> U) -> Observable[U]` - 累积操作，发射中间结果
-- `reduce[T, U](source: Observable[T], initial: U, accumulator: (U, T) -> U) -> Observable[U]` - 累积操作，只发射最终结果
+### 🔗 Combination Operators
 
-### 工具函数
+- `merge[T](sources: Array[Observable[T]]) -> Observable[T]` - Merge Observables
+- `concat[T](sources: Array[Observable[T]]) -> Observable[T]` - Concatenate Observables
 
-- `new_observer[T](on_next, on_error, on_complete) -> Observer[T]` - 创建观察者
-- `new_observable[T](subscribe_fn) -> Observable[T]` - 创建 Observable
-- `subscribe[T](observable: Observable[T], observer: Observer[T]) -> BasicSubscription` - 订阅 Observable
-- `subscribe_next[T](observable: Observable[T], on_next: (T) -> Unit) -> BasicSubscription` - 便捷订阅方法
+### 🛠️ Utility Operators
 
-## 示例
+- `tap[T](source, side_effect) -> Observable[T]` - Side effects
+- `distinct[T : Eq](source) -> Observable[T]` - Remove duplicates
+- `catch_error[T](source, error_handler) -> Observable[T]` - Error recovery
 
-查看 `examples/` 目录获取更多使用示例。
+## 📚 Examples
 
-## 测试与覆盖率
+### 🎯 Usage Examples
 
-### 运行测试
+Check out complete examples in `src/examples.mbt`:
 
-本项目实现了全面的代码覆盖率测试：
-
-```bash
-# 运行完整的演示和测试
-moon run src/test.mbt
+```moonbit
+// Call example functions
+example_basic_usage()      // Basic usage demo
+example_operator_chain()   // Operator chaining demo
 ```
 
-### 覆盖率报告
+### 🔗 Operator Chaining Example
 
-当前代码覆盖率: **100%** (22/22 函数)
+```moonbit
+// Data processing pipeline
+let pipeline = from_array([1, 2, 3, 2, 4, 5])
+  |> distinct()                    // Dedupe: [1, 2, 3, 4, 5]
+  |> filter(fn(x) { x % 2 == 1 })  // Odds: [1, 3, 5]
+  |> map(fn(x) { x * x })         // Square: [1, 9, 25]
+  |> scan(0, fn(acc, x) { acc + x }) // Sum: [1, 10, 35]
 
-测试覆盖的功能模块：
-- ✅ **创建操作符**: `of`, `from_array`, `empty`, `never`, `error` (5/5)
-- ✅ **转换操作符**: `map`, `filter`, `take`, `skip`, `scan`, `reduce` (6/6) 
-- ✅ **高级操作符**: `tap`, `distinct`, `merge`, `concat`, `catch_error` (5/5)
-- ✅ **Observer管理**: `new_observer`, `new_simple_observer`, `subscribe` 等 (6/6)
-
-### 功能验证
-
-每次运行测试会验证：
-- 基本Observable创建和订阅
-- 所有转换操作符的正确性
-- 错误处理机制
-- 订阅生命周期管理
-- 复杂操作符链的组合
-
-## 开发
-
-### 构建
-
-```bash
-moon check src/lib
+let _ = pipeline.subscribe_next(fn(x) { println("Running sum: \(x)") })
 ```
 
-## 贡献
+## 🧪 Testing
 
-欢迎贡献代码！请确保：
+### Run Tests
 
-1. 遵循现有的代码风格
-2. 为新功能添加测试
-3. 更新相关文档
+```bash
+# Run all tests
+moon test
 
-## 许可证
+# Check code
+moon check
 
-MIT License - 详见 [LICENSE](LICENSE) 文件。
+# Build project
+moon build
+```
 
-## 致谢
+### 📊 Test Coverage
 
-本项目受到 [ReactiveX](https://reactivex.io/) 的启发，为 MoonBit 语言提供响应式编程支持。
+**Current Test Status**:
+- ✅ **Test Cases**: 29 tests, all passing
+- ✅ **API Coverage**: 16 public functions fully covered
+- ✅ **Feature Coverage**: All operators and core functionality
+
+## 🛠️ Development
+
+### Project Structure
+
+```
+ReactiveX/
+├── src/                    # Source directory
+│   ├── reactivex.mbt      # ReactiveX core implementation
+│   ├── test.mbt           # Test suite
+│   ├── examples.mbt       # Usage examples
+│   └── moon.pkg.json      # Package configuration
+├── moon.mod.json          # Project configuration
+├── README.md              # English documentation
+├── README_zh_CN.md        # Chinese documentation
+└── LICENSE                # MIT license
+```
+
+### Build Commands
+
+```bash
+# Check syntax and types
+moon check
+
+# Build project  
+moon build
+
+# Run tests
+moon test
+
+# Format code
+moon fmt
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please ensure:
+
+1. **Code Quality**: Follow existing code style, pass all tests
+2. **Test Coverage**: Add test cases for new features
+3. **Documentation**: Update relevant docs and examples
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+This project is inspired by [ReactiveX](https://reactivex.io/), bringing reactive programming support to the MoonBit language.
+
+---
+
+**ReactiveX for MoonBit** - Making reactive programming simple and powerful in MoonBit! 🚀

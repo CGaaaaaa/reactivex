@@ -23,3 +23,15 @@ Thumbs.db
 
 # 日志文件
 *.log
+
+# 覆盖率和测试产物
+*.coverage
+_coverage/
+bisect.coverage
+coverage_report.md
+coverage_analysis_report.md
+
+# 临时文件
+*.tmp
+*.temp
+*~
