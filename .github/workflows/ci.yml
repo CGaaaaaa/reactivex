@@ -40,13 +40,8 @@ jobs:
         moon test
         echo "Tests completed successfully"
     
-    - name: Show Coverage Info
+    - name: Build Project
       run: |
-        echo "=== Coverage Commands ==="
-        moon coverage --help | head -10
-        echo "=== Coverage Clean ==="
-        moon coverage clean
-        echo "=== Coverage Analyze ==="
-        moon coverage analyze
-        echo "=== Coverage Report ==="
-        moon coverage report -f summary
+        echo "=== Building Project ==="
+        moon build
+        echo "Build completed successfully"
