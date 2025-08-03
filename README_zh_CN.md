@@ -1,9 +1,5 @@
 # ReactiveX for MoonBit
 
-[![codecov](https://codecov.io/gh/CGaaaaaa/ReactiveX/branch/main/graph/badge.svg)](https://codecov.io/gh/CGaaaaaa/ReactiveX)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Tests Passing](https://img.shields.io/badge/Tests-Passing-brightgreen.svg)](src/test.mbt)
-
 [English](README.md) | 中文
 
 Reactive Extensions for MoonBit - 用于 MoonBit 编程语言的响应式编程库。

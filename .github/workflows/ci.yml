@@ -18,11 +18,35 @@ jobs:
       with:
         version: latest
     
-    - name: Check
-      run: moon check
+    - name: Show Environment
+      run: |
+        echo "=== Environment Info ==="
+        pwd
+        ls -la
+        echo "=== MoonBit Version ==="
+        moon --version
+        echo "=== MoonBit Help ==="
+        moon --help | head -20
     
-    - name: Test
-      run: moon test
+    - name: Check Project
+      run: |
+        echo "=== Checking Project ==="
+        moon check
+        echo "Check completed successfully"
     
-    - name: Show MoonBit Version
-      run: moon --version
+    - name: Run Tests
+      run: |
+        echo "=== Running Tests ==="
+        moon test
+        echo "Tests completed successfully"
+    
+    - name: Show Coverage Info
+      run: |
+        echo "=== Coverage Commands ==="
+        moon coverage --help | head -10
+        echo "=== Coverage Clean ==="
+        moon coverage clean
+        echo "=== Coverage Analyze ==="
+        moon coverage analyze
+        echo "=== Coverage Report ==="
+        moon coverage report -f summary

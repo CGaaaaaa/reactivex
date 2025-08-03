@@ -1,9 +1,5 @@
 # ReactiveX for MoonBit
 
-[![codecov](https://codecov.io/gh/CGaaaaaa/ReactiveX/branch/main/graph/badge.svg)](https://codecov.io/gh/CGaaaaaa/ReactiveX)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Tests Passing](https://img.shields.io/badge/Tests-Passing-brightgreen.svg)](src/test.mbt)
-
 English | [中文](README_zh_CN.md)
 
 Reactive Extensions for MoonBit - A comprehensive reactive programming library for the MoonBit language.
