@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
 
 jobs:
   test:
@@ -14,34 +14,40 @@ jobs:
     - uses: actions/checkout@v4
     
     - name: Setup MoonBit
-      uses: moonbitlang/setup-moonbit@v1
+      uses: hustcer/setup-moonbit@v1
       with:
-        version: latest
+        version: "latest"
     
-    - name: Show Environment
+    - name: Check MoonBit installation
       run: |
-        echo "=== Environment Info ==="
-        pwd
-        ls -la
-        echo "=== MoonBit Version ==="
-        moon version
-        echo "=== MoonBit Help ==="
-        moon help | head -20
+        moon version --all
+        which moon
     
-    - name: Check Project
+    - name: Install dependencies
       run: |
-        echo "=== Checking Project ==="
+        moon install
+    
+    - name: Check project
+      run: |
         moon check
-        echo "Check completed successfully"
     
-    - name: Run Tests
+    - name: Run tests with coverage
       run: |
-        echo "=== Running Tests ==="
-        moon test
-        echo "Tests completed successfully"
+        moon test --enable-coverage
     
-    - name: Build Project
+    - name: Generate coverage reports
       run: |
-        echo "=== Building Project ==="
+        moon coverage report -f cobertura -o coverage.xml
+        moon coverage report -f html
+    
+    - name: Upload coverage reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: |
+          coverage.xml
+          _coverage/
+    
+    - name: Build project
+      run: |
         moon build
-        echo "Build completed successfully"
