@@ -18,17 +18,11 @@ jobs:
       with:
         version: latest
     
-    - name: Build and Test
-      run: |
-        moon check
-        moon test
+    - name: Check
+      run: moon check
     
-    - name: Generate Coverage Data
-      run: |
-        moon coverage clean
-        moon coverage analyze
+    - name: Test
+      run: moon test
     
-    - name: Generate Coverage Report
-      run: |
-        moon coverage report -f summary
-        ls -la
+    - name: Show MoonBit Version
+      run: moon --version
