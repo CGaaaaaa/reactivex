@@ -23,10 +23,13 @@ jobs:
         moon check
         moon test
     
-    - name: Generate Coverage Report
+    - name: Generate Coverage Data
       run: |
         moon coverage clean
         moon coverage analyze
+    
+    - name: Generate Coverage Report
+      run: |
         moon coverage report -f coveralls -o coverage.json
         ls -la coverage.json
     
