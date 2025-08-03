@@ -25,28 +25,35 @@ ReactiveX for MoonBit is a feature-complete reactive programming library that pr
 - ✅ `never` - Create Observable that never emits
 - ✅ `error` / `error_with_type` - Create error Observable
 
-### 🔄 Transformation Operators (6)
+### 🔄 Transformation Operators (8)
 - ✅ `map` - Transform values
 - ✅ `filter` - Filter by predicate
 - ✅ `take` - Take first N values
 - ✅ `skip` - Skip first N values
 - ✅ `scan` - Accumulate with intermediate results
 - ✅ `reduce` - Reduce to single final result
+- ✅ `flat_map` - Transform and flatten inner Observables
+- ✅ `switch_map` - Switch to latest inner Observable
 
-### 🔗 Combination Operators (2)
+### 🔗 Combination Operators (4)
 - ✅ `merge` - Merge multiple Observables
 - ✅ `concat` - Concatenate multiple Observables
+- ✅ `combine_latest` - Combine latest values from multiple sources
+- ✅ `zip` - Pair values from multiple sources
 
-### 🛠️ Utility Operators (3)
+### 🛠️ Utility Operators (6)
 - ✅ `tap` - Side effects (debugging friendly)
 - ✅ `distinct` - Remove duplicates
 - ✅ `catch_error` - Error catching and recovery
+- ✅ `debounce` - Emit only after delay period
+- ✅ `start_with` - Prepend initial value
+- ✅ `retry` - Retry on error with max attempts
 
 ### ⚡ Advanced Features
 - ✅ **Generic Support**: Full type safety guarantees
 - ✅ **Fluent API**: Chainable method design
 - ✅ **Error Recovery**: Robust error handling mechanisms
-- ✅ **Test Coverage**: 29 test cases with 100% coverage
+- ✅ **Test Coverage**: 30+ test cases with 100% coverage
 
 ## Quick Start
 

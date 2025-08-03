@@ -541,3 +541,73 @@ test "take operator early completion" {
   }
 }
 
+/// 测试高级操作符
+fn test_advanced_operators() -> Unit {
+  println("=== 测试高级操作符 ===")
+  
+  // 测试flatMap
+  let source = from_array([1, 2, 3])
+  let flattened = flat_map(source, fn(x) { from_array([x, x * 2]) })
+  let _ = flattened.subscribe_next(fn(value) {
+    println("flatMap结果: {value}")
+  })
+  
+  // 测试switchMap
+  let switch_source = from_array([1, 2])
+  let switched = switch_map(switch_source, fn(x) { from_array([x * 10, x * 20]) })
+  let _ = switched.subscribe_next(fn(value) {
+    println("switchMap结果: {value}")
+  })
+  
+  // 测试combineLatest
+  let obs1 = from_array([1, 2])
+  let obs2 = from_array([10, 20])
+  let combined = combine_latest(obs1, obs2, fn(a, b) { a + b })
+  let _ = combined.subscribe_next(fn(value) {
+    println("combineLatest结果: {value}")
+  })
+  
+  // 测试zip
+  let zipped = zip(obs1, obs2, fn(a, b) { a * b })
+  let _ = zipped.subscribe_next(fn(value) {
+    println("zip结果: {value}")
+  })
+  
+  // 测试debounce
+  let debounced = debounce(from_array([1, 2, 3, 4, 5]), 2)
+  let _ = debounced.subscribe_next(fn(value) {
+    println("debounce结果: {value}")
+  })
+  
+  // 测试startWith
+  let with_start = start_with(from_array([2, 3, 4]), 1)
+  let _ = with_start.subscribe_next(fn(value) {
+    println("startWith结果: {value}")
+  })
+  
+  // 测试retry
+  let mut attempt_count = 0
+  let error_source = new_observable(fn(observer) {
+    attempt_count = attempt_count + 1
+    if attempt_count <= 2 {
+      (observer.on_error)(RuntimeError("模拟错误"))
+    } else {
+      (observer.on_next)(42)
+      (observer.on_complete)()
+    }
+    new_subscription()
+  })
+  
+  let retried = retry(error_source, 3)
+  let _ = retried.subscribe(new_simple_observer(
+    fn(value) { println("retry成功: {value}") },
+    fn(error) { println("retry失败: {error}") },
+    fn() { println("retry完成") }
+  ))
+  
+  println("=== 高级操作符测试完成 ===\n")
+}
+
+test "高级操作符测试" {
+  test_advanced_operators()
+}

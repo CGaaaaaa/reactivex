@@ -25,22 +25,29 @@ ReactiveX for MoonBit 是一个功能完整的响应式编程库，提供了 Obs
 - ✅ `never` - 创建永不发射的Observable
 - ✅ `error` / `error_with_type` - 创建错误Observable
 
-### 🔄 转换操作符 (6个)
+### 🔄 转换操作符 (8个)
 - ✅ `map` - 值转换
 - ✅ `filter` - 条件过滤
 - ✅ `take` - 取前N个值
 - ✅ `skip` - 跳过前N个值  
 - ✅ `scan` - 累积计算（发射中间结果）
 - ✅ `reduce` - 归约计算（仅发射最终结果）
+- ✅ `flat_map` - 转换并扁平化内部Observable
+- ✅ `switch_map` - 切换到最新的内部Observable
 
-### 🔗 组合操作符 (2个)
+### 🔗 组合操作符 (4个)
 - ✅ `merge` - 合并多个Observable
 - ✅ `concat` - 串联多个Observable
+- ✅ `combine_latest` - 组合多个源的最新值
+- ✅ `zip` - 配对多个源的值
 
-### 🛠️ 工具操作符 (3个)
+### 🛠️ 工具操作符 (6个)
 - ✅ `tap` - 副作用操作（调试友好）
 - ✅ `distinct` - 去重
 - ✅ `catch_error` - 错误捕获和恢复
+- ✅ `debounce` - 防抖，延迟后发射
+- ✅ `start_with` - 添加初始值
+- ✅ `retry` - 错误重试（最大次数）
 
 ### ⚡ 高级特性
 - ✅ **泛型支持**：完整的类型安全保障
