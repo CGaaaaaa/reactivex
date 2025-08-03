@@ -10,6 +10,12 @@ coverage:
         target: auto
         threshold: 1%
         informational: true
+  
+  # 指定覆盖率文件的格式
+  parsers:
+    coveralls:
+      target_files:
+        - coverage.json
 
 comment:
   layout: "header,diff,flags,files,footer"
@@ -18,13 +24,7 @@ comment:
   require_base: no
   require_head: yes
 
-parsers:
-  lcov:
-    branch_detection:
-      conditional: yes
-      loop: yes
-      method: no
-      macro: no
+
 
 ignore:
   - "node_modules"
