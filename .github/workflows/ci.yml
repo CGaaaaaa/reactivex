@@ -30,15 +30,5 @@ jobs:
     
     - name: Generate Coverage Report
       run: |
-        moon coverage report -f coveralls -o coverage.json
-        ls -la coverage.json
-    
-    - name: Upload Coverage to Codecov
-      uses: codecov/codecov-action@v4
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        file: ./coverage.json
-        flags: unittests
-        name: codecov-umbrella
-        fail_ci_if_error: false
-        verbose: true
+        moon coverage report -f summary
+        ls -la
