@@ -29,8 +29,8 @@ jobs:
         moon coverage clean
         # 运行MoonBit测试并生成覆盖率
         moon coverage analyze
-        # 生成Codecov兼容的coverage报告（使用正确的命令）
-        moon_cove_report -f coveralls -o coverage.json
+        # 生成Codecov兼容的coverage报告
+        moon coverage report -f coveralls -o coverage.json
         # 验证文件生成
         if [ -f "coverage.json" ]; then
           echo "✅ Coverage report generated successfully"
