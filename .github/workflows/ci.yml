@@ -27,7 +27,7 @@ jobs:
     - name: Generate Coverage Report
       run: |
         # 运行MoonBit测试并生成覆盖率
-        moon test --enable-coverage
+        moon coverage analyze
         # 生成Codecov兼容的coverage报告
         moon coverage report -f coveralls -o coverage.json
         # 显示生成的文件
