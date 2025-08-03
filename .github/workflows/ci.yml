@@ -24,9 +24,9 @@ jobs:
         pwd
         ls -la
         echo "=== MoonBit Version ==="
-        moon --version
+        moon version
         echo "=== MoonBit Help ==="
-        moon --help | head -20
+        moon help | head -20
     
     - name: Check Project
       run: |
