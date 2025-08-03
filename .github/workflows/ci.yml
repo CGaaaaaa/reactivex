@@ -27,14 +27,24 @@ jobs:
     - name: Generate Coverage Report
       run: |
         # 运行MoonBit测试并生成覆盖率
-        moon test --coverage
-        moon coverage bisect.coverage --format=lcov > coverage.lcov
+        moon test --enable-coverage
+        # 生成Codecov兼容的coverage报告
+        moon coverage report -f coveralls -o coverage.json
+        # 显示生成的文件
+        ls -la coverage.*
+        echo "Generated coverage files:"
+        if [ -f "coverage.json" ]; then
+          echo "✅ coverage.json generated successfully"
+          head -20 coverage.json
+        else
+          echo "❌ coverage.json not found"
+        fi
     
     - name: Upload Coverage to Codecov
       uses: codecov/codecov-action@v4
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        file: ./coverage.lcov
+        file: ./coverage.json
         flags: unittests
         name: codecov-umbrella
         fail_ci_if_error: false
