@@ -30,6 +30,7 @@ _coverage/
 bisect.coverage
 coverage_report.md
 coverage_analysis_report.md
+coverage.json
 
 # 临时文件
 *.tmp
