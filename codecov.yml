@@ -24,10 +24,7 @@ comment:
   require_base: no
   require_head: yes
 
-
-
 ignore:
   - "node_modules"
   - "target"
   - "_coverage"
-  - "**/*.json"

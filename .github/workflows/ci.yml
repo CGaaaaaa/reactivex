@@ -25,21 +25,10 @@ jobs:
     
     - name: Generate Coverage Report
       run: |
-        # 清理之前的覆盖率文件
         moon coverage clean
-        # 运行MoonBit测试并生成覆盖率
         moon coverage analyze
-        # 生成Codecov兼容的coverage报告
         moon coverage report -f coveralls -o coverage.json
-        # 验证文件生成
-        if [ -f "coverage.json" ]; then
-          echo "✅ Coverage report generated successfully"
-          echo "File size: $(wc -c < coverage.json) bytes"
-          head -5 coverage.json
-        else
-          echo "❌ coverage.json not found"
-          exit 1
-        fi
+        ls -la coverage.json
     
     - name: Upload Coverage to Codecov
       uses: codecov/codecov-action@v4
