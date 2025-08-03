@@ -26,16 +26,15 @@ jobs:
     
     - name: Generate Coverage Report
       run: |
-        # 这里需要根据 MoonBit 的覆盖率工具来配置
-        # 目前使用模拟的覆盖率数据
-        mkdir -p coverage
-        echo '{"coverage": 100, "files": ["src/reactivex.mbt"]}' > coverage/coverage.json
+        # 运行MoonBit测试并生成覆盖率
+        moon test --coverage
+        moon coverage bisect.coverage --format=lcov > coverage.lcov
     
     - name: Upload Coverage to Codecov
       uses: codecov/codecov-action@v4
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        file: ./coverage/coverage.json
+        file: ./coverage.lcov
         flags: unittests
         name: codecov-umbrella
         fail_ci_if_error: false
