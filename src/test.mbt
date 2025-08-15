@@ -535,7 +535,7 @@ fn test_advanced_operators() -> Unit {
   let source = from_array([1, 2, 3])
   let flattened = flat_map(source, fn(x) { from_array([x, x * 2]) })
   let _ = flattened.subscribe_next(fn(value) {
-    println("flatMap结果: {value}")
+    println("flatMap结果: " + value.to_string())
   })
 
   // 测试switchMap
@@ -544,7 +544,7 @@ fn test_advanced_operators() -> Unit {
     from_array([x * 10, x * 20])
   })
   let _ = switched.subscribe_next(fn(value) {
-    println("switchMap结果: {value}")
+    println("switchMap结果: " + value.to_string())
   })
 
   // 测试combineLatest
@@ -552,23 +552,25 @@ fn test_advanced_operators() -> Unit {
   let obs2 = from_array([10, 20])
   let combined = combine_latest(obs1, obs2, fn(a, b) { a + b })
   let _ = combined.subscribe_next(fn(value) {
-    println("combineLatest结果: {value}")
+    println("combineLatest结果: " + value.to_string())
   })
 
   // 测试zip
   let zipped = zip(obs1, obs2, fn(a, b) { a * b })
-  let _ = zipped.subscribe_next(fn(value) { println("zip结果: {value}") })
+  let _ = zipped.subscribe_next(fn(value) {
+    println("zip结果: " + value.to_string())
+  })
 
   // 测试debounce
   let debounced = debounce(from_array([1, 2, 3, 4, 5]), 2)
   let _ = debounced.subscribe_next(fn(value) {
-    println("debounce结果: {value}")
+    println("debounce结果: " + value.to_string())
   })
 
   // 测试startWith
   let with_start = start_with(from_array([2, 3, 4]), 1)
   let _ = with_start.subscribe_next(fn(value) {
-    println("startWith结果: {value}")
+    println("startWith结果: " + value.to_string())
   })
 
   // 测试retry
@@ -586,8 +588,8 @@ fn test_advanced_operators() -> Unit {
   let retried = retry(error_source, 3)
   let _ = retried.subscribe(
     new_simple_observer(
-      fn(value) { println("retry成功: {value}") },
-      fn(error) { println("retry失败: {error}") },
+      fn(value) { println("retry成功: " + value.to_string()) },
+      fn(error) { println("retry失败: " + error.to_string()) },
       fn() { println("retry完成") },
     ),
   )
