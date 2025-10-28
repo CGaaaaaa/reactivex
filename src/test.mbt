@@ -9,23 +9,21 @@ test "of operator" {
     fn() { }
   )
   let _ = obs.subscribe(observer)
-  if received != 42 {
-    panic()
-  }
+
+  assert_eq(received, 42)
 }
 
 test "from_array operator" {
   let obs = from_array([1, 2, 3])
   let mut count = 0
   let observer = new_simple_observer(
-    fn(_) { count = count + 1 },
+    fn(_) { count += 1 },
     fn(_) { },
     fn() { }
   )
   let _ = obs.subscribe(observer)
-  if count != 3 {
-    panic()
-  }
+
+  assert_eq(count, 3)
 }
 
 test "map operator" {
@@ -38,9 +36,8 @@ test "map operator" {
     fn() { }
   )
   let _ = mapped.subscribe(observer)
-  if sum != 6 { // 2 + 4 = 6
-    panic()
-  }
+
+  assert_eq(sum, 6) // 2 + 4 = 6
 }
 
 test "filter operator" {
@@ -53,9 +50,8 @@ test "filter operator" {
     fn() { }
   )
   let _ = filtered.subscribe(observer)
-  if count != 2 { // 2 and 4
-    panic()
-  }
+
+  assert_eq(count, 2) // 2 and 4
 }
 
 test "take operator" {
@@ -68,31 +64,25 @@ test "take operator" {
     fn() { }
   )
   let _ = taken.subscribe(observer)
-  if count != 3 {
-    panic()
-  }
+
+  assert_eq(count, 3)
 }
 
 // ===== 订阅管理测试 =====
 
 test "subscription management" {
   let sub = new_subscription()
-  if !sub.is_subscribed() {
-    panic()
-  }
+  assert_true(sub.is_subscribed())
   sub.unsubscribe()
-  if sub.is_subscribed() {
-    panic()
-  }
+  assert_false(sub.is_subscribed())
 }
 
 test "subscribe_next convenience method" {
   let obs = of(100)
   let mut received = 0
   let _ = obs.subscribe_next(fn(value) { received = value })
-  if received != 100 {
-    panic()
-  }
+
+  assert_eq(received, 100)
 }
 
 test "new_observer creation" {
@@ -110,9 +100,7 @@ test "new_observer creation" {
   (observer.on_error)(RuntimeError("test"))
   (observer.on_complete)()
   
-  if !next_called || !error_called || !complete_called {
-    panic()
-  }
+  assert_true(next_called && error_called && complete_called)
 }
 
 // ===== 创建操作符测试 =====
@@ -129,9 +117,8 @@ test "empty operator" {
   )
   let _ = obs.subscribe(observer)
   
-  if !completed || received_count != 0 {
-    panic()
-  }
+  assert_true(completed)
+  assert_eq(received_count, 0)
 }
 
 test "never operator" {
@@ -146,9 +133,8 @@ test "never operator" {
   )
   let _ = obs.subscribe(observer)
   
-  if completed || received_count != 0 {
-    panic()
-  }
+  assert_false(completed)
+  assert_eq(received_count, 0)
 }
 
 test "error operator" {
@@ -166,9 +152,8 @@ test "error operator" {
   )
   let _ = obs.subscribe(observer)
   
-  if !error_received || error_message != "test error" {
-    panic()
-  }
+  assert_true(error_received)
+  assert_eq(error_message, "test error")
 }
 
 test "error_with_type operator" {
@@ -190,10 +175,8 @@ test "error_with_type operator" {
     fn() { }
   )
   let _ = obs.subscribe(observer)
-  
-  if !error_received {
-    panic()
-  }
+
+  assert_true(error_received)
 }
 
 test "subscription_error type" {
@@ -216,9 +199,7 @@ test "subscription_error type" {
   )
   let _ = obs.subscribe(observer)
   
-  if !error_received {
-    panic()
-  }
+  assert_true(error_received)
 }
 
 test "timeout_error type" {
@@ -241,9 +222,7 @@ test "timeout_error type" {
   )
   let _ = obs.subscribe(observer)
   
-  if !error_received {
-    panic()
-  }
+  assert_true(error_received)
 }
 
 // ===== 转换操作符测试 =====
@@ -259,10 +238,8 @@ test "skip operator" {
     fn() { }
   )
   let _ = skipped.subscribe(observer)
-  
-  if results.length() != 3 || results[0] != 3 || results[1] != 4 || results[2] != 5 {
-    panic()
-  }
+
+  assert_eq(results, [3, 4, 5])
 }
 
 test "scan operator" {
@@ -278,9 +255,7 @@ test "scan operator" {
   let _ = scanned.subscribe(observer)
   
   // scan should emit: 0, 1, 3, 6
-  if results.length() != 4 || results[0] != 0 || results[1] != 1 || results[2] != 3 || results[3] != 6 {
-    panic()
-  }
+  assert_eq(results, [0, 1, 3, 6])
 }
 
 test "reduce operator" {
@@ -295,9 +270,7 @@ test "reduce operator" {
   )
   let _ = reduced.subscribe(observer)
   
-  if result != 10 { // 1+2+3+4 = 10
-    panic()
-  }
+  assert_eq(result, 10)
 }
 
 // ===== 高级操作符测试 =====
@@ -316,9 +289,8 @@ test "tap operator" {
   )
   let _ = tapped.subscribe(observer)
   
-  if side_effect_count != 3 || main_count != 3 {
-    panic()
-  }
+  assert_eq(side_effect_count, 3)
+  assert_eq(main_count, 3)
 }
 
 test "distinct operator" {
@@ -334,9 +306,7 @@ test "distinct operator" {
   let _ = distinct_obs.subscribe(observer)
   
   // distinct should emit: 1, 2, 3, 4
-  if results.length() != 4 || results[0] != 1 || results[1] != 2 || results[2] != 3 || results[3] != 4 {
-    panic()
-  }
+  assert_eq(results, [1, 2, 3, 4])
 }
 
 test "merge operator" {
@@ -354,9 +324,8 @@ test "merge operator" {
   )
   let _ = merged.subscribe(observer)
   
-  if results.length() != 4 || !completed {
-    panic()
-  }
+  assert_eq(results.length(), 4)
+  assert_true(completed)
 }
 
 test "concat operator" {
@@ -375,10 +344,8 @@ test "concat operator" {
   let _ = concatenated.subscribe(observer)
   
   // concat should emit in order: 1, 2, 3, 4
-  if results.length() != 4 || !completed || 
-     results[0] != 1 || results[1] != 2 || results[2] != 3 || results[3] != 4 {
-    panic()
-  }
+  assert_eq(results, [1, 2, 3, 4])
+  assert_true(completed)
 }
 
 test "catch_error operator" {
@@ -395,9 +362,8 @@ test "catch_error operator" {
   )
   let _ = recovered.subscribe(observer)
   
-  if received != 999 || !completed {
-    panic()
-  }
+  assert_eq(received, 999)
+  assert_true(completed)
 }
 
 // ===== 复杂场景测试 =====
@@ -418,9 +384,7 @@ test "chained operations" {
   let _ = result.subscribe(observer)
   
   // Should emit: 8, 10 (from 4*2, 5*2)
-  if results.length() != 2 || results[0] != 8 || results[1] != 10 {
-    panic()
-  }
+  assert_eq(results, [8, 10])
 }
 
 test "error handling in chain" {
@@ -440,9 +404,8 @@ test "error handling in chain" {
   )
   let _ = result.subscribe(observer)
   
-  if !error_caught || recovery_value != 42 {
-    panic()
-  }
+  assert_true(error_caught)
+  assert_eq(recovery_value, 42)
 }
 
 // ===== 边界条件测试 =====
@@ -459,9 +422,8 @@ test "empty array from_array" {
   )
   let _ = obs.subscribe(observer)
   
-  if !completed || count != 0 {
-    panic()
-  }
+  assert_true(completed)
+  assert_eq(count, 0)
 }
 
 test "take zero elements" {
@@ -477,9 +439,8 @@ test "take zero elements" {
   )
   let _ = taken.subscribe(observer)
   
-  if count != 0 || !completed {
-    panic()
-  }
+  assert_eq(count, 0)
+  assert_true(completed)
 }
 
 test "skip more than available" {
@@ -495,9 +456,8 @@ test "skip more than available" {
   )
   let _ = skipped.subscribe(observer)
   
-  if count != 0 || !completed {
-    panic()
-  }
+  assert_eq(count, 0)
+  assert_true(completed)
 }
 
 // ===== 覆盖率完整性测试 =====
@@ -515,9 +475,7 @@ test "subscribe_next error handling" {
     error_handled = true
   }
   
-  if !error_handled {
-    panic()
-  }
+  assert_true(error_handled)
 }
 
 test "take operator early completion" {
@@ -536,9 +494,8 @@ test "take operator early completion" {
   let _ = taken.subscribe(observer)
   
   // 这将触发take操作符中源Observable提前完成的代码路径
-  if received_count != 1 || !completed {
-    panic()
-  }
+  assert_true(completed)
+  assert_eq(received_count, 1)
 }
 
 /// 测试高级操作符
@@ -549,14 +506,14 @@ fn test_advanced_operators() -> Unit {
   let source = from_array([1, 2, 3])
   let flattened = flat_map(source, fn(x) { from_array([x, x * 2]) })
   let _ = flattened.subscribe_next(fn(value) {
-    println("flatMap结果: {value}")
+    println("flatMap结果: " + value.to_string())
   })
   
   // 测试switchMap
   let switch_source = from_array([1, 2])
   let switched = switch_map(switch_source, fn(x) { from_array([x * 10, x * 20]) })
   let _ = switched.subscribe_next(fn(value) {
-    println("switchMap结果: {value}")
+    println("switchMap结果: " + value.to_string())
   })
   
   // 测试combineLatest
@@ -564,25 +521,25 @@ fn test_advanced_operators() -> Unit {
   let obs2 = from_array([10, 20])
   let combined = combine_latest(obs1, obs2, fn(a, b) { a + b })
   let _ = combined.subscribe_next(fn(value) {
-    println("combineLatest结果: {value}")
+    println("combineLatest结果: " + value.to_string())
   })
   
   // 测试zip
   let zipped = zip(obs1, obs2, fn(a, b) { a * b })
   let _ = zipped.subscribe_next(fn(value) {
-    println("zip结果: {value}")
+    println("zip结果: " + value.to_string())
   })
   
   // 测试debounce
   let debounced = debounce(from_array([1, 2, 3, 4, 5]), 2)
   let _ = debounced.subscribe_next(fn(value) {
-    println("debounce结果: {value}")
+    println("debounce结果: " + value.to_string())
   })
   
   // 测试startWith
   let with_start = start_with(from_array([2, 3, 4]), 1)
   let _ = with_start.subscribe_next(fn(value) {
-    println("startWith结果: {value}")
+    println("startWith结果: " + value.to_string())
   })
   
   // 测试retry
@@ -600,8 +557,8 @@ fn test_advanced_operators() -> Unit {
   
   let retried = retry(error_source, 3)
   let _ = retried.subscribe(new_simple_observer(
-    fn(value) { println("retry成功: {value}") },
-    fn(error) { println("retry失败: {error}") },
+    fn(value) { println("retry成功: " + value.to_string()) },
+    fn(error) { println("retry失败: " + error.to_string()) },
     fn() { println("retry完成") }
   ))
   

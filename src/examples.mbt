@@ -8,13 +8,13 @@ pub fn example_basic_usage() -> Unit {
   // 1. 创建一个简单的Observable
   let simple_obs = of(42)
   let _ = simple_obs.subscribe_next(fn(value) {
-    println("接收到值: {value}")
+    println("接收到值: " + value.to_string())
   })
   
   // 2. 创建数组Observable
   let array_obs = from_array([1, 2, 3])
   let _ = array_obs.subscribe_next(fn(value) {
-    println("数组元素: {value}")
+    println("数组元素: " + value.to_string())
   })
   
   println("=== 示例完成 ===")
@@ -31,7 +31,7 @@ pub fn example_operator_chain() -> Unit {
     |> take(3)                       // 取前3个
   
   let _ = processed.subscribe_next(fn(value) {
-    println("处理后的值: {value}")
+    println("处理后的值: " + value.to_string())
   })
   
   println("=== 示例完成 ===")
