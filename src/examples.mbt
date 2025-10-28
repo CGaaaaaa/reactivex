@@ -1,6 +1,7 @@
 /// ReactiveX for MoonBit - 使用示例
 /// 展示基本的Observable创建和订阅功能
 
+///|
 /// 基础使用示例
 pub fn example_basic_usage() -> Unit {
   println("=== 基础使用示例 ===")
@@ -20,6 +21,7 @@ pub fn example_basic_usage() -> Unit {
   println("=== 示例完成 ===")
 }
 
+///|
 /// 操作符链示例
 pub fn example_operator_chain() -> Unit {
   println("=== 操作符链示例 ===")

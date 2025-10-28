@@ -1,5 +1,6 @@
-// ===== 基础测试 =====
+// ===== Basic Tests =====
 
+///|
 test "of operator" {
   let obs = of(42)
   let mut received = 0
@@ -14,6 +15,7 @@ test "of operator" {
   }
 }
 
+///|
 test "from_array operator" {
   let obs = from_array([1, 2, 3])
   let mut count = 0
@@ -28,6 +30,7 @@ test "from_array operator" {
   }
 }
 
+///|
 test "map operator" {
   let source = from_array([1, 2])
   let mapped = map(source, fn(x) { x * 2 })
@@ -43,6 +46,7 @@ test "map operator" {
   }
 }
 
+///|
 test "filter operator" {
   let source = from_array([1, 2, 3, 4])
   let filtered = filter(source, fn(x) { x % 2 == 0 })
@@ -58,6 +62,7 @@ test "filter operator" {
   }
 }
 
+///|
 test "take operator" {
   let source = from_array([1, 2, 3, 4, 5])
   let taken = take(source, 3)
@@ -73,8 +78,9 @@ test "take operator" {
   }
 }
 
-// ===== 订阅管理测试 =====
+// ===== Subscription Management Tests =====
 
+///|
 test "subscription management" {
   let sub = new_subscription()
   if !sub.is_subscribed() {
@@ -86,6 +92,7 @@ test "subscription management" {
   }
 }
 
+///|
 test "subscribe_next convenience method" {
   let obs = of(100)
   let mut received = 0
@@ -95,6 +102,7 @@ test "subscribe_next convenience method" {
   }
 }
 
+///|
 test "new_observer creation" {
   let mut next_called = false
   let mut error_called = false
@@ -115,8 +123,9 @@ test "new_observer creation" {
   }
 }
 
-// ===== 创建操作符测试 =====
+// ===== Creation Operators Tests =====
 
+///|
 test "empty operator" {
   let obs : Observable[Int] = empty()
   let mut completed = false
@@ -134,6 +143,7 @@ test "empty operator" {
   }
 }
 
+///|
 test "never operator" {
   let obs : Observable[Int] = never()
   let mut received_count = 0
@@ -151,6 +161,7 @@ test "never operator" {
   }
 }
 
+///|
 test "error operator" {
   let obs : Observable[Int] = error("test error")
   let mut error_received = false
@@ -171,6 +182,7 @@ test "error operator" {
   }
 }
 
+///|
 test "error_with_type operator" {
   let obs : Observable[Int] = error_with_type(OperatorError("operator failed"))
   let mut error_received = false
@@ -196,6 +208,7 @@ test "error_with_type operator" {
   }
 }
 
+///|
 test "subscription_error type" {
   let obs : Observable[Int] = error_with_type(SubscriptionError("subscription failed"))
   let mut error_received = false
@@ -221,6 +234,7 @@ test "subscription_error type" {
   }
 }
 
+///|
 test "timeout_error type" {
   let obs : Observable[Int] = error_with_type(TimeoutError("operation timed out"))
   let mut error_received = false
@@ -245,9 +259,9 @@ test "timeout_error type" {
     panic()
   }
 }
+// ===== Transformation Operators Tests =====
 
-// ===== 转换操作符测试 =====
-
+///|
 test "skip operator" {
   let source = from_array([1, 2, 3, 4, 5])
   let skipped = skip(source, 2)
@@ -265,6 +279,7 @@ test "skip operator" {
   }
 }
 
+///|
 test "scan operator" {
   let source = from_array([1, 2, 3])
   let scanned = scan(source, 0, fn(acc : Int, x : Int) -> Int { acc + x })
@@ -283,6 +298,7 @@ test "scan operator" {
   }
 }
 
+///|
 test "reduce operator" {
   let source = from_array([1, 2, 3, 4])
   let reduced = reduce(source, 0, fn(acc : Int, x : Int) -> Int { acc + x })
@@ -300,8 +316,9 @@ test "reduce operator" {
   }
 }
 
-// ===== 高级操作符测试 =====
+// ===== Side Effects Tests =====
 
+///|
 test "tap operator" {
   let source = from_array([1, 2, 3])
   let mut side_effect_count = 0
@@ -321,6 +338,7 @@ test "tap operator" {
   }
 }
 
+///|
 test "distinct operator" {
   let source = from_array([1, 2, 2, 3, 1, 4])
   let distinct_obs = distinct(source)
@@ -339,6 +357,7 @@ test "distinct operator" {
   }
 }
 
+///|
 test "merge operator" {
   let source1 = from_array([1, 3])
   let source2 = from_array([2, 4])
@@ -359,6 +378,7 @@ test "merge operator" {
   }
 }
 
+///|
 test "concat operator" {
   let source1 = from_array([1, 2])
   let source2 = from_array([3, 4])
@@ -381,6 +401,7 @@ test "concat operator" {
   }
 }
 
+///|
 test "catch_error operator" {
   let error_source : Observable[Int] = error("test error")
   let recovered = catch_error(error_source, fn(_) { of(999) })
@@ -400,8 +421,9 @@ test "catch_error operator" {
   }
 }
 
-// ===== 复杂场景测试 =====
+// ===== Chained Operations Tests =====
 
+///|
 test "chained operations" {
   let source = from_array([1, 2, 3, 4, 5, 6])
   let result = source
@@ -423,6 +445,7 @@ test "chained operations" {
   }
 }
 
+///|
 test "error handling in chain" {
   let mut error_caught = false
   let mut recovery_value = 0
@@ -445,8 +468,9 @@ test "error handling in chain" {
   }
 }
 
-// ===== 边界条件测试 =====
+// ===== Edge Case Tests =====
 
+///|
 test "empty array from_array" {
   let obs : Observable[Int] = from_array([])
   let mut completed = false
@@ -464,6 +488,7 @@ test "empty array from_array" {
   }
 }
 
+///|
 test "take zero elements" {
   let source = from_array([1, 2, 3])
   let taken = take(source, 0)
@@ -482,6 +507,7 @@ test "take zero elements" {
   }
 }
 
+///|
 test "skip more than available" {
   let source = from_array([1, 2])
   let skipped = skip(source, 5)
@@ -500,8 +526,9 @@ test "skip more than available" {
   }
 }
 
-// ===== 覆盖率完整性测试 =====
+// ===== Side Effects Tests =====
 
+///|
 test "subscribe_next error handling" {
   let error_source : Observable[Int] = error("test error for subscribe_next")
   let mut error_handled = false
@@ -520,6 +547,7 @@ test "subscribe_next error handling" {
   }
 }
 
+///|
 test "take operator early completion" {
   // 创建一个只发射一个值然后完成的Observable
   let single_value = of(42)
@@ -541,6 +569,7 @@ test "take operator early completion" {
   }
 }
 
+///|
 /// 测试高级操作符
 fn test_advanced_operators() -> Unit {
   println("=== 测试高级操作符 ===")
@@ -608,6 +637,7 @@ fn test_advanced_operators() -> Unit {
   println("=== 高级操作符测试完成 ===\n")
 }
 
+///|
 test "高级操作符测试" {
   test_advanced_operators()
 }
