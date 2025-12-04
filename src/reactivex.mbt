@@ -558,7 +558,7 @@ pub fn[T] take(source : Observable[T], count : Int) -> Observable[T] {
       fn(value) {
         if taken < count {
           (observer.on_next)(value)
-          taken = taken + 1
+          taken += 1
           if taken == count {
             (observer.on_complete)()
           }
@@ -597,7 +597,7 @@ pub fn[T] skip(source : Observable[T], count : Int) -> Observable[T] {
         if skipped >= count {
           (observer.on_next)(value)
         } else {
-          skipped = skipped + 1
+          skipped += 1
         }
       },
       observer.on_error,
@@ -713,8 +713,10 @@ pub fn[T] merge(sources : Array[Observable[T]]) -> Observable[T] {
     let mut completed_count = 0
     for i = 0; i < sources.length(); i = i + 1 {
       let source = sources[i]
-      let subscription = source.subscribe(
-        new_observer(observer.on_next, observer.on_error, fn() {
+      let subscription = source.subscribe(new_observer(
+        observer.on_next,
+        observer.on_error,
+        fn() {
           completed_count += 1
           if completed_count == sources.length() {
             (observer.on_complete)()
@@ -758,8 +760,10 @@ pub fn[T] concat(sources : Array[Observable[T]]) -> Observable[T] {
     fn subscribe_next() -> Unit {
       if current_index < sources.length() {
         let source = sources[current_index]
-        current_subscription = source.subscribe(
-          new_observer(observer.on_next, observer.on_error, fn() {
+        current_subscription = source.subscribe(new_observer(
+          observer.on_next,
+          observer.on_error,
+          fn() {
             current_index += 1
             subscribe_next()
           }),
@@ -929,10 +933,12 @@ pub fn[T, U] flat_map(
 
     let original_observer = new_observer(
       fn(value) {
-        active_subscriptions = active_subscriptions + 1
+        active_subscriptions += 1
         let inner_observable = transform(value)
-        let _ = inner_observable.subscribe(
-          new_observer(observer.on_next, observer.on_error, fn() {
+        let _ = inner_observable.subscribe(new_observer(
+          observer.on_next,
+          observer.on_error,
+          fn() {
             active_subscriptions -= 1
             check_completion()
           }),
@@ -1043,7 +1049,7 @@ pub fn[T, U, V] combine_latest(
     }
 
     fn on_complete() -> Unit {
-      completed_count = completed_count + 1
+      completed_count += 1
       if completed_count == 2 {
         (observer.on_complete)()
       }
@@ -1178,7 +1184,7 @@ pub fn[T] debounce(source : Observable[T], delay_count : Int) -> Observable[T] {
     let mut last_value : T? = None
     let original_observer = new_observer(
       fn(value) {
-        counter = counter + 1
+        counter += 1
         last_value = Some(value)
 
         // 简化的防抖逻辑（计数器模拟时间延迟）
@@ -1261,21 +1267,18 @@ pub fn[T] retry(source : Observable[T], max_retries : Int) -> Observable[T] {
   new_observable(fn(observer) {
     let mut retry_count = 0
     fn attempt_subscribe() -> BasicSubscription {
-      source.subscribe(
-        new_observer(
-          observer.on_next,
-          fn(error) {
-            if retry_count < max_retries {
-              retry_count += 1
-              let _ = attempt_subscribe()
-
-            } else {
-              (observer.on_error)(error)
-            }
-          },
-          observer.on_complete,
-        ),
-      )
+      source.subscribe(new_observer(
+        observer.on_next,
+        fn(error) {
+          if retry_count < max_retries {
+            retry_count += 1
+            let _ = attempt_subscribe()
+          } else {
+            (observer.on_error)(error)
+          }
+        },
+        observer.on_complete
+      ))
     }
 
     attempt_subscribe()
