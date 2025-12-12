@@ -157,7 +157,7 @@ pub fn[T] new_observer(
 ///     fn(){}
 ///   )
 ///   (o.on_next)("hello")
-///   assert_eq(values, ["hello"])    
+///   assert_eq(values, ["hello"])
 /// ```
 pub fn[T] new_simple_observer(
   on_next : (T) -> Unit,
@@ -205,7 +205,7 @@ pub fn new_subscription() -> BasicSubscription {
 /// Returns:
 ///
 /// * `Bool` - `true` if subscribed, otherwise `false`.
-pub fn is_subscribed(self : BasicSubscription) -> Bool {
+pub fn BasicSubscription::is_subscribed(self : BasicSubscription) -> Bool {
   self.subscribed
 }
 
@@ -221,7 +221,7 @@ pub fn is_subscribed(self : BasicSubscription) -> Bool {
 /// ```moonbit
 ///   let s = new_subscription(); s.unsubscribe()
 /// ```
-pub fn unsubscribe(self : BasicSubscription) -> Unit {
+pub fn BasicSubscription::unsubscribe(self : BasicSubscription) -> Unit {
   self.subscribed = false
 }
 
@@ -261,7 +261,7 @@ pub fn[T] new_observable(
 /// Returns:
 ///
 /// * `BasicSubscription`
-pub fn[T] subscribe(
+pub fn[T] Observable::subscribe(
   self : Observable[T],
   observer : Observer[T],
 ) -> BasicSubscription {
@@ -288,7 +288,7 @@ pub fn[T] subscribe(
 ///   of(1).subscribe_next(fn(v){ emitted.push(v) })
 ///   assert_eq(emitted, [1])
 /// ```
-pub fn[T] subscribe_next(
+pub fn[T] Observable::subscribe_next(
   self : Observable[T],
   on_next : (T) -> Unit,
 ) -> BasicSubscription {
@@ -422,7 +422,7 @@ pub fn[T] never() -> Observable[T] {
 /// ```moonbit
 ///   let values = []
 ///   error("test error").subscribe(new_observer(fn(_){}, fn(_){ values.push("err") }, fn(){}))
-///   assert_eq(values, ["err"]) 
+///   assert_eq(values, ["err"])
 /// ```
 pub fn[T] error(error_message : String) -> Observable[T] {
   new_observable(fn(observer) {
@@ -450,7 +450,7 @@ pub fn[T] error(error_message : String) -> Observable[T] {
 /// ```moonbit
 ///   let values = []
 ///   error_with_type(OperatorError("op failed")).subscribe(new_observer(fn(_){}, fn(_){ values.push("err") }, fn(){}))
-///   assert_eq(values, ["err"]) 
+///   assert_eq(values, ["err"])
 /// ```
 pub fn[T] error_with_type(rx_error : RxError) -> Observable[T] {
   new_observable(fn(observer) {
@@ -713,10 +713,8 @@ pub fn[T] merge(sources : Array[Observable[T]]) -> Observable[T] {
     let mut completed_count = 0
     for i = 0; i < sources.length(); i = i + 1 {
       let source = sources[i]
-      let subscription = source.subscribe(new_observer(
-        observer.on_next,
-        observer.on_error,
-        fn() {
+      let subscription = source.subscribe(
+        new_observer(observer.on_next, observer.on_error, fn() {
           completed_count += 1
           if completed_count == sources.length() {
             (observer.on_complete)()
@@ -760,10 +758,8 @@ pub fn[T] concat(sources : Array[Observable[T]]) -> Observable[T] {
     fn subscribe_next() -> Unit {
       if current_index < sources.length() {
         let source = sources[current_index]
-        current_subscription = source.subscribe(new_observer(
-          observer.on_next,
-          observer.on_error,
-          fn() {
+        current_subscription = source.subscribe(
+          new_observer(observer.on_next, observer.on_error, fn() {
             current_index += 1
             subscribe_next()
           }),
@@ -935,10 +931,8 @@ pub fn[T, U] flat_map(
       fn(value) {
         active_subscriptions += 1
         let inner_observable = transform(value)
-        let _ = inner_observable.subscribe(new_observer(
-          observer.on_next,
-          observer.on_error,
-          fn() {
+        let _ = inner_observable.subscribe(
+          new_observer(observer.on_next, observer.on_error, fn() {
             active_subscriptions -= 1
             check_completion()
           }),
@@ -1267,18 +1261,21 @@ pub fn[T] retry(source : Observable[T], max_retries : Int) -> Observable[T] {
   new_observable(fn(observer) {
     let mut retry_count = 0
     fn attempt_subscribe() -> BasicSubscription {
-      source.subscribe(new_observer(
-        observer.on_next,
-        fn(error) {
-          if retry_count < max_retries {
-            retry_count += 1
-            let _ = attempt_subscribe()
-          } else {
-            (observer.on_error)(error)
-          }
-        },
-        observer.on_complete
-      ))
+      source.subscribe(
+        new_observer(
+          observer.on_next,
+          fn(error) {
+            if retry_count < max_retries {
+              retry_count += 1
+              let _ = attempt_subscribe()
+
+            } else {
+              (observer.on_error)(error)
+            }
+          },
+          observer.on_complete,
+        ),
+      )
     }
 
     attempt_subscribe()
