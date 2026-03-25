@@ -2,65 +2,65 @@
 package "CGaaaaaa/reactivex/src"
 
 // Values
-fn[T] catch_error(Observable[T], (RxError) -> Observable[T]) -> Observable[T]
+pub fn[T] catch_error(Observable[T], (RxError) -> Observable[T]) -> Observable[T]
 
-fn[T, U, V] combine_latest(Observable[T], Observable[U], (T, U) -> V) -> Observable[V]
+pub fn[T, U, V] combine_latest(Observable[T], Observable[U], (T, U) -> V) -> Observable[V]
 
-fn[T] concat(Array[Observable[T]]) -> Observable[T]
+pub fn[T] concat(Array[Observable[T]]) -> Observable[T]
 
-fn[T] debounce(Observable[T], Int) -> Observable[T]
+pub fn[T] debounce(Observable[T], Int) -> Observable[T]
 
-fn[T : Eq] distinct(Observable[T]) -> Observable[T]
+pub fn[T : Eq] distinct(Observable[T]) -> Observable[T]
 
-fn[T] empty() -> Observable[T]
+pub fn[T] empty() -> Observable[T]
 
-fn[T] error(String) -> Observable[T]
+pub fn[T] error(String) -> Observable[T]
 
-fn[T] error_with_type(RxError) -> Observable[T]
+pub fn[T] error_with_type(RxError) -> Observable[T]
 
-fn example_basic_usage() -> Unit
+pub fn example_basic_usage() -> Unit
 
-fn example_operator_chain() -> Unit
+pub fn example_operator_chain() -> Unit
 
-fn[T] filter(Observable[T], (T) -> Bool) -> Observable[T]
+pub fn[T] filter(Observable[T], (T) -> Bool) -> Observable[T]
 
-fn[T, U] flat_map(Observable[T], (T) -> Observable[U]) -> Observable[U]
+pub fn[T, U] flat_map(Observable[T], (T) -> Observable[U]) -> Observable[U]
 
-fn[T] from_array(Array[T]) -> Observable[T]
+pub fn[T] from_array(Array[T]) -> Observable[T]
 
-fn[T, U] map(Observable[T], (T) -> U) -> Observable[U]
+pub fn[T, U] map(Observable[T], (T) -> U) -> Observable[U]
 
-fn[T] merge(Array[Observable[T]]) -> Observable[T]
+pub fn[T] merge(Array[Observable[T]]) -> Observable[T]
 
-fn[T] never() -> Observable[T]
+pub fn[T] never() -> Observable[T]
 
-fn[T] new_observable((Observer[T]) -> BasicSubscription) -> Observable[T]
+pub fn[T] new_observable((Observer[T]) -> BasicSubscription) -> Observable[T]
 
-fn[T] new_observer((T) -> Unit, (RxError) -> Unit, () -> Unit) -> Observer[T]
+pub fn[T] new_observer((T) -> Unit, (RxError) -> Unit, () -> Unit) -> Observer[T]
 
-fn[T] new_simple_observer((T) -> Unit, (String) -> Unit, () -> Unit) -> Observer[T]
+pub fn[T] new_simple_observer((T) -> Unit, (String) -> Unit, () -> Unit) -> Observer[T]
 
-fn new_subscription() -> BasicSubscription
+pub fn new_subscription() -> BasicSubscription
 
-fn[T] of(T) -> Observable[T]
+pub fn[T] of(T) -> Observable[T]
 
-fn[T, U] reduce(Observable[T], U, (U, T) -> U) -> Observable[U]
+pub fn[T, U] reduce(Observable[T], U, (U, T) -> U) -> Observable[U]
 
-fn[T] retry(Observable[T], Int) -> Observable[T]
+pub fn[T] retry(Observable[T], Int) -> Observable[T]
 
-fn[T, U] scan(Observable[T], U, (U, T) -> U) -> Observable[U]
+pub fn[T, U] scan(Observable[T], U, (U, T) -> U) -> Observable[U]
 
-fn[T] skip(Observable[T], Int) -> Observable[T]
+pub fn[T] skip(Observable[T], Int) -> Observable[T]
 
-fn[T] start_with(Observable[T], T) -> Observable[T]
+pub fn[T] start_with(Observable[T], T) -> Observable[T]
 
-fn[T, U] switch_map(Observable[T], (T) -> Observable[U]) -> Observable[U]
+pub fn[T, U] switch_map(Observable[T], (T) -> Observable[U]) -> Observable[U]
 
-fn[T] take(Observable[T], Int) -> Observable[T]
+pub fn[T] take(Observable[T], Int) -> Observable[T]
 
-fn[T] tap(Observable[T], (T) -> Unit) -> Observable[T]
+pub fn[T] tap(Observable[T], (T) -> Unit) -> Observable[T]
 
-fn[T, U, V] zip(Observable[T], Observable[U], (T, U) -> V) -> Observable[V]
+pub fn[T, U, V] zip(Observable[T], Observable[U], (T, U) -> V) -> Observable[V]
 
 // Errors
 
@@ -68,14 +68,14 @@ fn[T, U, V] zip(Observable[T], Observable[U], (T, U) -> V) -> Observable[V]
 pub struct BasicSubscription {
   mut subscribed : Bool
 }
-fn BasicSubscription::is_subscribed(Self) -> Bool
-fn BasicSubscription::unsubscribe(Self) -> Unit
+pub fn BasicSubscription::is_subscribed(Self) -> Bool
+pub fn BasicSubscription::unsubscribe(Self) -> Unit
 
 pub struct Observable[T] {
   subscribe_fn : (Observer[T]) -> BasicSubscription
 }
-fn[T] Observable::subscribe(Self[T], Observer[T]) -> BasicSubscription
-fn[T] Observable::subscribe_next(Self[T], (T) -> Unit) -> BasicSubscription
+pub fn[T] Observable::subscribe(Self[T], Observer[T]) -> BasicSubscription
+pub fn[T] Observable::subscribe_next(Self[T], (T) -> Unit) -> BasicSubscription
 
 pub struct Observer[T] {
   on_next : (T) -> Unit

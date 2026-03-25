@@ -18,11 +18,7 @@ test "of operator" {
 test "from_array operator" {
   let obs = from_array([1, 2, 3])
   let mut count = 0
-  let observer = new_simple_observer(
-    fn(_) { count += 1 },
-    fn(_) { },
-    fn() { }
-  )
+  let observer = new_simple_observer(fn(_) { count += 1 }, fn(_) {  }, fn() {  })
   let _ = obs.subscribe(observer)
 
   assert_eq(count, 3)
@@ -101,7 +97,7 @@ test "new_observer creation" {
   (observer.on_next)(42)
   (observer.on_error)(RuntimeError("test"))
   (observer.on_complete)()
-  
+
   assert_true(next_called && error_called && complete_called)
 }
 
@@ -118,7 +114,7 @@ test "empty operator" {
     fn() { completed = true },
   )
   let _ = obs.subscribe(observer)
-  
+
   assert_true(completed)
   assert_eq(received_count, 0)
 }
@@ -134,7 +130,7 @@ test "never operator" {
     fn() { completed = true },
   )
   let _ = obs.subscribe(observer)
-  
+
   assert_false(completed)
   assert_eq(received_count, 0)
 }
@@ -153,7 +149,7 @@ test "error operator" {
     fn() {  },
   )
   let _ = obs.subscribe(observer)
-  
+
   assert_true(error_received)
   assert_eq(error_message, "test error")
 }
@@ -200,7 +196,7 @@ test "subscription_error type" {
     fn() {  },
   )
   let _ = obs.subscribe(observer)
-  
+
   assert_true(error_received)
 }
 
@@ -224,7 +220,7 @@ test "timeout_error type" {
     fn() {  },
   )
   let _ = obs.subscribe(observer)
-  
+
   assert_true(error_received)
 }
 // ===== Transformation Operators Tests =====
@@ -269,7 +265,7 @@ test "reduce operator" {
 
   })
   let _ = reduced.subscribe(observer)
-  
+
   assert_eq(result, 10)
 }
 
@@ -287,7 +283,7 @@ test "tap operator" {
     fn() {  },
   )
   let _ = tapped.subscribe(observer)
-  
+
   assert_eq(side_effect_count, 3)
   assert_eq(main_count, 3)
 }
@@ -321,7 +317,7 @@ test "merge operator" {
     fn() { completed = true },
   )
   let _ = merged.subscribe(observer)
-  
+
   assert_eq(results.length(), 4)
   assert_true(completed)
 }
@@ -357,7 +353,7 @@ test "catch_error operator" {
     fn() { completed = true },
   )
   let _ = recovered.subscribe(observer)
-  
+
   assert_eq(received, 999)
   assert_true(completed)
 }
@@ -398,7 +394,7 @@ test "error handling in chain" {
     fn() {  },
   )
   let _ = result.subscribe(observer)
-  
+
   assert_true(error_caught)
   assert_eq(recovery_value, 42)
 }
@@ -414,7 +410,7 @@ test "empty array from_array" {
     completed = true
   })
   let _ = obs.subscribe(observer)
-  
+
   assert_true(completed)
   assert_eq(count, 0)
 }
@@ -429,7 +425,7 @@ test "take zero elements" {
     completed = true
   })
   let _ = taken.subscribe(observer)
-  
+
   assert_eq(count, 0)
   assert_true(completed)
 }
@@ -444,7 +440,7 @@ test "skip more than available" {
     completed = true
   })
   let _ = skipped.subscribe(observer)
-  
+
   assert_eq(count, 0)
   assert_true(completed)
 }
@@ -464,7 +460,7 @@ test "subscribe_next error handling" {
   if true { // 始终通过，主要是为了覆盖率
     error_handled = true
   }
-  
+
   assert_true(error_handled)
 }
 
@@ -521,7 +517,7 @@ fn test_advanced_operators() -> Unit {
   let _ = zipped.subscribe_next(fn(value) {
     println("zip结果: " + value.to_string())
   })
-  
+
   // 测试debounce
   let debounced = debounce(from_array([1, 2, 3, 4, 5]), 2)
   let _ = debounced.subscribe_next(fn(value) {
@@ -547,12 +543,14 @@ fn test_advanced_operators() -> Unit {
     new_subscription()
   })
   let retried = retry(error_source, 3)
-  let _ = retried.subscribe(new_simple_observer(
-    fn(value) { println("retry成功: " + value.to_string()) },
-    fn(error) { println("retry失败: " + error.to_string()) },
-    fn() { println("retry完成") }
-  ))
-  
+  let _ = retried.subscribe(
+    new_simple_observer(
+      fn(value) { println("retry成功: " + value.to_string()) },
+      fn(error) { println("retry失败: " + error.to_string()) },
+      fn() { println("retry完成") },
+    ),
+  )
+
   println("=== 高级操作符测试完成 ===\n")
 }
 

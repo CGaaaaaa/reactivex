@@ -1,0 +1,7 @@
+options(
+  author: "ReactiveX Team",
+  description: "Reactive Extensions for MoonBit",
+  license: "MIT",
+  name: "CGaaaaaa/reactivex",
+  version: "0.1.0",
+)
