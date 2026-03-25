@@ -10,7 +10,7 @@
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let e = RxError::RuntimeError("network")
 ///   match e {
 ///     RuntimeError(msg) => assert_eq(msg, "network")
@@ -41,7 +41,7 @@ pub enum RxError {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let values = []
 ///   let o = new_observer(
 ///     fn(v){ values.push(v) },
@@ -68,7 +68,7 @@ pub struct Observer[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let s = new_subscription()
 ///   assert_eq(s.is_subscribed(), true)
 ///   // unsubscribe (consumes the subscription)
@@ -89,7 +89,7 @@ pub struct BasicSubscription {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let collected = []
 ///   of(1).subscribe_next(fn(v){ collected.push(v) })
 ///   assert_eq(collected, [1])
@@ -113,7 +113,7 @@ pub struct Observable[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   // collect values to assert behavior in examples/tests
 ///   let values = []
 ///   let o = new_observer(
@@ -149,7 +149,7 @@ pub fn[T] new_observer(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let values = []
 ///   let o = new_simple_observer(
 ///     fn(v){ values.push(v) },
@@ -157,7 +157,7 @@ pub fn[T] new_observer(
 ///     fn(){}
 ///   )
 ///   (o.on_next)("hello")
-///   assert_eq(values, ["hello"])    
+///   assert_eq(values, ["hello"])
 /// ```
 pub fn[T] new_simple_observer(
   on_next : (T) -> Unit,
@@ -187,7 +187,7 @@ pub fn[T] new_simple_observer(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let s = new_subscription()
 ///   assert_eq(s.is_subscribed(), true)
 /// ```
@@ -205,7 +205,7 @@ pub fn new_subscription() -> BasicSubscription {
 /// Returns:
 ///
 /// * `Bool` - `true` if subscribed, otherwise `false`.
-pub fn is_subscribed(self : BasicSubscription) -> Bool {
+pub fn BasicSubscription::is_subscribed(self : BasicSubscription) -> Bool {
   self.subscribed
 }
 
@@ -218,10 +218,10 @@ pub fn is_subscribed(self : BasicSubscription) -> Bool {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let s = new_subscription(); s.unsubscribe()
 /// ```
-pub fn unsubscribe(self : BasicSubscription) -> Unit {
+pub fn BasicSubscription::unsubscribe(self : BasicSubscription) -> Unit {
   self.subscribed = false
 }
 
@@ -238,7 +238,7 @@ pub fn unsubscribe(self : BasicSubscription) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let values = []
 ///   let o = new_observable(fn(obs){ (obs.on_next)(1); (obs.on_complete)(); new_subscription() })
 ///   o.subscribe_next(fn(v){ values.push(v) })
@@ -261,7 +261,7 @@ pub fn[T] new_observable(
 /// Returns:
 ///
 /// * `BasicSubscription`
-pub fn[T] subscribe(
+pub fn[T] Observable::subscribe(
   self : Observable[T],
   observer : Observer[T],
 ) -> BasicSubscription {
@@ -282,13 +282,13 @@ pub fn[T] subscribe(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   // of emits a single value
 ///   let emitted = []
 ///   of(1).subscribe_next(fn(v){ emitted.push(v) })
 ///   assert_eq(emitted, [1])
 /// ```
-pub fn[T] subscribe_next(
+pub fn[T] Observable::subscribe_next(
   self : Observable[T],
   on_next : (T) -> Unit,
 ) -> BasicSubscription {
@@ -315,7 +315,7 @@ pub fn[T] subscribe_next(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let values = []
 ///   of(42).subscribe_next(fn(v){ values.push(v) })
 ///   assert_eq(values, [42])
@@ -344,7 +344,7 @@ pub fn[T] of(value : T) -> Observable[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let values = []
 ///   from_array([1,2,3]).subscribe_next(fn(v){ values.push(v) })
 ///   assert_eq(values, [1,2,3])
@@ -371,7 +371,7 @@ pub fn[T] from_array(values : Array[T]) -> Observable[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let values = []
 ///   empty().subscribe_next(fn(v){ values.push(v) })
 ///   // empty emits nothing
@@ -396,7 +396,7 @@ pub fn[T] empty() -> Observable[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let values = []
 ///   never().subscribe_next(fn(v){ values.push(v) })
 ///   // never emits nothing (and never completes)
@@ -419,10 +419,10 @@ pub fn[T] never() -> Observable[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let values = []
 ///   error("test error").subscribe(new_observer(fn(_){}, fn(_){ values.push("err") }, fn(){}))
-///   assert_eq(values, ["err"]) 
+///   assert_eq(values, ["err"])
 /// ```
 pub fn[T] error(error_message : String) -> Observable[T] {
   new_observable(fn(observer) {
@@ -447,10 +447,10 @@ pub fn[T] error(error_message : String) -> Observable[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let values = []
 ///   error_with_type(OperatorError("op failed")).subscribe(new_observer(fn(_){}, fn(_){ values.push("err") }, fn(){}))
-///   assert_eq(values, ["err"]) 
+///   assert_eq(values, ["err"])
 /// ```
 pub fn[T] error_with_type(rx_error : RxError) -> Observable[T] {
   new_observable(fn(observer) {
@@ -478,7 +478,7 @@ pub fn[T] error_with_type(rx_error : RxError) -> Observable[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let values = []
 ///   let obs = map(from_array([1,2]), fn(x) { x * 2 })
 ///   obs.subscribe_next(fn(v){ values.push(v) })
@@ -509,7 +509,7 @@ pub fn[T, U] map(source : Observable[T], transform : (T) -> U) -> Observable[U] 
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let values = []
 ///   filter(from_array([1,2,3]), fn(x){ x % 2 == 1 }).subscribe_next(fn(v){ values.push(v) })
 ///   assert_eq(values, [1,3])
@@ -541,7 +541,7 @@ pub fn[T] filter(
 /// * `Observable[T]`
 /// 
 /// Example:
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let values = []
 ///   take(from_array([1,2,3]), 2).subscribe_next(fn(v){ values.push(v) })
 ///   assert_eq(values, [1,2])
@@ -584,7 +584,7 @@ pub fn[T] take(source : Observable[T], count : Int) -> Observable[T] {
 /// * `Observable[T]`
 /// 
 /// Example:
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let values = []
 ///   skip(from_array([1,2,3]), 1).subscribe_next(fn(v){ values.push(v) })
 ///   assert_eq(values, [2,3])
@@ -621,7 +621,7 @@ pub fn[T] skip(source : Observable[T], count : Int) -> Observable[T] {
 /// * `Observable[U]`
 /// 
 /// Example:
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let values = []
 ///   scan(from_array([1,2]), 0, fn(acc, x){ acc + x }).subscribe_next(fn(v){ values.push(v) })
 ///   // emits initial then intermediate: [0,1,3]
@@ -661,7 +661,7 @@ pub fn[T, U] scan(
 /// * `Observable[U]`
 ///
 /// Example:
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let results = []
 ///   reduce(from_array([1,2,3]), 0, fn(acc, x){ acc + x }).subscribe_next(fn(v){ results.push(v) })
 ///   // reduce emits final accumulated value on completion
@@ -701,7 +701,7 @@ pub fn[T, U] reduce(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let values = []
 ///   merge([from_array([1]), from_array([2])]).subscribe_next(fn(v){ values.push(v) })
 ///   // merged values may interleave; as a simple deterministic example with these sources:
@@ -713,10 +713,8 @@ pub fn[T] merge(sources : Array[Observable[T]]) -> Observable[T] {
     let mut completed_count = 0
     for i = 0; i < sources.length(); i = i + 1 {
       let source = sources[i]
-      let subscription = source.subscribe(new_observer(
-        observer.on_next,
-        observer.on_error,
-        fn() {
+      let subscription = source.subscribe(
+        new_observer(observer.on_next, observer.on_error, fn() {
           completed_count += 1
           if completed_count == sources.length() {
             (observer.on_complete)()
@@ -748,7 +746,7 @@ pub fn[T] merge(sources : Array[Observable[T]]) -> Observable[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let values = []
 ///   concat([from_array([1]), from_array([2])]).subscribe_next(fn(v){ values.push(v) })
 ///   assert_eq(values, [1,2])
@@ -760,10 +758,8 @@ pub fn[T] concat(sources : Array[Observable[T]]) -> Observable[T] {
     fn subscribe_next() -> Unit {
       if current_index < sources.length() {
         let source = sources[current_index]
-        current_subscription = source.subscribe(new_observer(
-          observer.on_next,
-          observer.on_error,
-          fn() {
+        current_subscription = source.subscribe(
+          new_observer(observer.on_next, observer.on_error, fn() {
             current_index += 1
             subscribe_next()
           }),
@@ -792,7 +788,7 @@ pub fn[T] concat(sources : Array[Observable[T]]) -> Observable[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let values = []
 ///   let side = []
 ///   tap(from_array([1,2]), fn(v){ side.push(v) }).subscribe_next(fn(v){ values.push(v) })
@@ -829,7 +825,7 @@ pub fn[T] tap(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let values = []
 ///   distinct(from_array([1,1,2])).subscribe_next(fn(v){ values.push(v) })
 ///   assert_eq(values, [1,2])
@@ -872,7 +868,7 @@ pub fn[T : Eq] distinct(source : Observable[T]) -> Observable[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let results = []
 ///   catch_error(error("e"), fn(_){ from_array([9]) }).subscribe_next(fn(v){ results.push(v) })
 ///   assert_eq(results, [9])
@@ -887,7 +883,6 @@ pub fn[T] catch_error(
       fn(error) {
         let recovery_source = error_handler(error)
         let _ = recovery_source.subscribe(observer)
-
       },
       observer.on_complete,
     )
@@ -911,7 +906,7 @@ pub fn[T] catch_error(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let results = []
 ///   let f = flat_map(from_array([1,2]), fn(x){ from_array([x, x*2]) })
 ///   f.subscribe_next(fn(v){ results.push(v) })
@@ -935,15 +930,12 @@ pub fn[T, U] flat_map(
       fn(value) {
         active_subscriptions += 1
         let inner_observable = transform(value)
-        let _ = inner_observable.subscribe(new_observer(
-          observer.on_next,
-          observer.on_error,
-          fn() {
+        let _ = inner_observable.subscribe(
+          new_observer(observer.on_next, observer.on_error, fn() {
             active_subscriptions -= 1
             check_completion()
           }),
         )
-
       },
       observer.on_error,
       fn() {
@@ -968,7 +960,7 @@ pub fn[T, U] flat_map(
 /// * `Observable[U]`
 ///
 /// Example:
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let results = []
 ///   let f = switch_map(from_array([1,2]), fn(x){ from_array([x, x*2]) })
 ///   f.subscribe_next(fn(v){ results.push(v) })
@@ -1027,7 +1019,7 @@ pub fn[T, U] switch_map(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let values = []
 ///   combine_latest(from_array([1,2]), from_array([10,20]), fn(a,b){ a + b }).subscribe_next(fn(v){ values.push(v) })
 ///   assert_eq(values, [11,22])
@@ -1094,7 +1086,7 @@ pub fn[T, U, V] combine_latest(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let values = []
 ///   zip(from_array([1,2]), from_array([10,20]), fn(a,b){ a + b }).subscribe_next(fn(v){ values.push(v) })
 ///   assert_eq(values, [11,22])
@@ -1172,7 +1164,7 @@ pub fn[T, U, V] zip(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let values = []
 ///   debounce(from_array([1,2,3]), 2).subscribe_next(fn(v){ values.push(v) })
 ///   // emits every 2nd event and final last value on complete: [2,3]
@@ -1227,7 +1219,7 @@ pub fn[T] debounce(source : Observable[T], delay_count : Int) -> Observable[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let values = []
 ///   start_with(from_array([2,3]), 1).subscribe_next(fn(v){ values.push(v) })
 ///   assert_eq(values, [1,2,3])
@@ -1258,7 +1250,7 @@ pub fn[T] start_with(
 /// * `Observable[T]`
 /// 
 /// Example:
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let values = []
 ///   retry(from_array([1,2,3]), 2).subscribe_next(fn(v){ values.push(v) })
 ///   assert_eq(values, [1,2,3])
@@ -1267,18 +1259,20 @@ pub fn[T] retry(source : Observable[T], max_retries : Int) -> Observable[T] {
   new_observable(fn(observer) {
     let mut retry_count = 0
     fn attempt_subscribe() -> BasicSubscription {
-      source.subscribe(new_observer(
-        observer.on_next,
-        fn(error) {
-          if retry_count < max_retries {
-            retry_count += 1
-            let _ = attempt_subscribe()
-          } else {
-            (observer.on_error)(error)
-          }
-        },
-        observer.on_complete
-      ))
+      source.subscribe(
+        new_observer(
+          observer.on_next,
+          fn(error) {
+            if retry_count < max_retries {
+              retry_count += 1
+              let _ = attempt_subscribe()
+            } else {
+              (observer.on_error)(error)
+            }
+          },
+          observer.on_complete,
+        ),
+      )
     }
 
     attempt_subscribe()

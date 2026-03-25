@@ -36,3 +36,6 @@ coverage.json
 *.tmp
 *.temp
 *~
+
+_build/
+target
